@@ -1,6 +1,6 @@
 'use client';
 
-import { Box, Stack, Typography, Button, Modal, TextField, IconButton, Tooltip, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, Chip, Snackbar } from "@mui/material";
+import { Box, Stack, Typography, Button, Modal, TextField, IconButton, Tooltip, Paper, List, ListItem, ListItemText, ListItemSecondaryAction, Chip, Snackbar, useMediaQuery } from "@mui/material";
 import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
@@ -17,18 +17,7 @@ import { useEffect, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Autocomplete from '@mui/material/Autocomplete';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-
-const modalStyle = {
-  position: 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  borderRadius: '8px',
-  boxShadow: 24,
-  p: 4,
-};
+import { useTheme } from '@mui/material/styles';
 
 const MotionBox = motion(Box);
 
@@ -56,6 +45,24 @@ export default function Home() {
   const [userName, setUserName] = useState("Your Name");
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+
+  const modalStyle = {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: isMobile ? '90%' : 600,
+    maxWidth: '90vw',
+    maxHeight: '80vh',
+    overflow: 'auto',
+    bgcolor: 'background.paper',
+    borderRadius: '8px',
+    boxShadow: 24,
+    p: 4,
+  };
 
   const handleOpenModal = () => setModalOpen(true);
   const handleCloseModal = () => setModalOpen(false);
@@ -187,7 +194,6 @@ export default function Home() {
   };
 
   const categorizeItem = (itemName) => {
-    // This is a simple categorization. You might want to expand this logic.
     if (['apple', 'banana', 'tomato', 'lettuce'].some(word => itemName.toLowerCase().includes(word))) return 'Produce';
     if (['milk', 'cheese', 'yogurt'].some(word => itemName.toLowerCase().includes(word))) return 'Dairy';
     if (['chicken', 'beef', 'pork'].some(word => itemName.toLowerCase().includes(word))) return 'Meat';
@@ -218,6 +224,7 @@ export default function Home() {
       setSnackbarOpen(true);
     });
   };
+
   return (
     <Box width="100vw" height="100vh" display="flex" flexDirection="column" sx={{ bgcolor: '#f0f4f0' }}>
       {/* Header */}
@@ -235,7 +242,7 @@ export default function Home() {
         <Typography variant="h6" color="#fff" fontWeight="bold">
           Pantry Tracker
         </Typography>
-        <Box width={48} /> {/* Placeholder for balance */}
+        <Box width={48} />
       </Box>
 
       {/* Main Content */}
@@ -329,67 +336,65 @@ export default function Home() {
         </motion.div>
       </Box>
 
-
-<AnimatePresence>
-  {menuOpen && (
-    <MotionBox
-      initial={{ x: '-100%' }}
-      animate={{ x: 0 }}
-      exit={{ x: '-100%' }}
-      transition={{ duration: 0.3 }}
-      sx={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        width: '250px',
-        height: '100%',
-        bgcolor: '#388E3C',
-        color: '#fff',
-        display: 'flex',
-        flexDirection: 'column',
-        padding: 2,
-        boxShadow: 3,
-      }}
-    >
-      <IconButton
-        sx={{ alignSelf: 'flex-end', color: '#fff' }}
-        onClick={() => setMenuOpen(false)}
-      >
-        <CloseIcon />
-      </IconButton>
-      <Stack spacing={9} sx={{ flexGrow: 1 }}>
-        <Stack direction="row" alignItems="center" spacing={2}>
-          <AccountCircleIcon sx={{ fontSize: 60 }} />
-          <Typography variant="h6">{userName}</Typography>
-        </Stack>
-        <Button
-          variant="contained"
-          startIcon={<RestaurantIcon />}
-          onClick={handleOpenRecipeModal}
-          sx={{ bgcolor: '#66BB6A', '&:hover': { bgcolor: '#4CAF50' } }}
-        >
-          Recipe Ideas
-        </Button>
-        <Button
-          variant="contained"
-          startIcon={<ShoppingCartIcon />}
-          onClick={handleOpenShoppingListModal}
-          sx={{ bgcolor: '#66BB6A', '&:hover': { bgcolor: '#4CAF50' } }}
-        >
-          Shopping List
-        </Button>
-      </Stack>
-      <Button
-        variant="contained"
-        onClick={handleSignOut}
-        sx={{ bgcolor: '#f44336', '&:hover': { bgcolor: '#d32f2f' }, mt: 'auto' }}
-      >
-        Sign Out
-      </Button>
-    </MotionBox>
-  )}
-</AnimatePresence>
-
+      <AnimatePresence>
+        {menuOpen && (
+          <MotionBox
+            initial={{ x: '-100%' }}
+            animate={{ x: 0 }}
+            exit={{ x: '-100%' }}
+            transition={{ duration: 0.3 }}
+            sx={{
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '250px',
+              height: '100%',
+              bgcolor: '#388E3C',
+              color: '#fff',
+              display: 'flex',
+              flexDirection: 'column',
+              padding: 2,
+              boxShadow: 3,
+            }}
+          >
+            <IconButton
+              sx={{ alignSelf: 'flex-end', color: '#fff' }}
+              onClick={() => setMenuOpen(false)}
+            >
+              <CloseIcon />
+            </IconButton>
+            <Stack spacing={9} sx={{ flexGrow: 1 }}>
+              <Stack direction="row" alignItems="center" spacing={2}>
+                <AccountCircleIcon sx={{ fontSize: 60 }} />
+                <Typography variant="h6">{userName}</Typography>
+              </Stack>
+              <Button
+                variant="contained"
+                startIcon={<RestaurantIcon />}
+                onClick={handleOpenRecipeModal}
+                sx={{ bgcolor: '#66BB6A', '&:hover': { bgcolor: '#4CAF50' } }}
+              >
+                Recipe Ideas
+              </Button>
+              <Button
+                variant="contained"
+                startIcon={<ShoppingCartIcon />}
+                onClick={handleOpenShoppingListModal}
+                sx={{ bgcolor: '#66BB6A', '&:hover': { bgcolor: '#4CAF50' } }}
+              >
+                Shopping List
+              </Button>
+            </Stack>
+            <Button
+              variant="contained"
+              onClick={handleSignOut}
+              sx={{ bgcolor: '#f44336', '&:hover': { bgcolor: '#d32f2f' }, mt: 'auto' }}
+            >
+              Sign Out
+            </Button>
+          </MotionBox>
+        )}
+      </AnimatePresence>
 
       {/* Modals */}
       <Modal open={modalOpen} onClose={handleCloseModal}>
@@ -436,6 +441,7 @@ export default function Home() {
           </Button>
         </Box>
       </Modal>
+
       <Modal open={showRecipeModal} onClose={handleCloseRecipeModal}>
         <Box sx={modalStyle}>
           <Typography variant="h6" component="h2" gutterBottom>
@@ -460,10 +466,9 @@ export default function Home() {
         </Box>
       </Modal>
 
-      
-     {/* Shopping List Modal */}
-     <Modal open={showShoppingListModal} onClose={handleCloseShoppingListModal}>
-        <Box sx={{ ...modalStyle, width: 600, maxHeight: '80vh', overflow: 'auto' }}>
+      {/* Shopping List Modal */}
+      <Modal open={showShoppingListModal} onClose={handleCloseShoppingListModal}>
+        <Box sx={modalStyle}>
           <Typography variant="h6" component="h2" gutterBottom>
             Shopping List
           </Typography>
@@ -569,9 +574,6 @@ export default function Home() {
         onClose={() => setSnackbarOpen(false)}
         message={snackbarMessage}
       />
-
-        </Box>
-
+    </Box>
   );
 }
-  
